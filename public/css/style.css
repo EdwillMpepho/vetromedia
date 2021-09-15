@@ -1,0 +1,11 @@
+.menu li{
+    display: inline;
+    list-style: none;
+    margin-left: 10px;
+}
+.menu a{
+    color:#fff;
+}
+.menu a:hover{
+    color: #00ff00;
+}
