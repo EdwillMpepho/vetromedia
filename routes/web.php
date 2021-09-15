@@ -15,10 +15,11 @@ use App\Http\Controllers\AuthController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+/*
 Route::get('/', function () {
     return view('welcome');
 });
+*/
 
 //Route for displaying register screen
 Route::get('register/view',[AuthController::class,'registerView'])->name('user.register.view');
@@ -29,7 +30,7 @@ Route::post('register',[AuthController::class,'register'])->name('user.register'
 //Route for login user
 Route::post('login',[AuthController::class,'login'])->name('user.login');
 //Route for displaying all posts
-Route::get('posts',[PostController::class,'index'])->name('posts.index');
+Route::get('/',[PostController::class,'index'])->name('posts.index');
 //Route for displaying the create post screen
 Route::get('post/create',[PostController::class,'create'])->name('post.create');
 
@@ -38,6 +39,14 @@ Route::get('post/create',[PostController::class,'create'])->name('post.create');
 Route::middleware(['auth'])->group(function () {
    //Route logout
    Route::post('logout',[AuthController::class,'logout'])->name('logout'); 
+   //Route for creating a post
+   Route::post('post',[PostController::class,'store'])->name('post.store');
+   //Route shows a single post to be edited
+   Route::get('post/{id}',[PostController::class,'show'])->name('post.show');
+   // Route for update post
+   Route::put('post/{id}',[PostController::class,'update'])->name('post.update');
+   // Route for deleting a post
+   Route::delete('post/{id}',[PostController::class,'destroy'])->name('post.destroy');
 });
 
 

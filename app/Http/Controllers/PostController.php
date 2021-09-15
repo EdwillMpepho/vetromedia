@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -36,7 +37,22 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         // validates user input
+         $this->validate($request,[
+            'title'     => 'required|min:3|max:191',
+            'body'      => 'required|min:3|max:191',
+            'rate'      =>  'required'
+         ]);
+
+         // create an new post
+         $post = new Post;
+         $post->title = $request->input('title');
+         $post->body = $request->input('body');
+         $post->rate = $request->input('rate');
+         $post->user_id = Auth::user()->id;
+         $post->save();
+ 
+        return redirect('/')->with('success_message','post successfully added');
     }
 
     /**
@@ -47,18 +63,8 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $post = Post::find($id);
+        return view('pages.editpost')->with('post',$post);
     }
 
     /**
@@ -70,7 +76,27 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
+        $this->validate($request,[
+            'title'     => 'required|min:3|max:191',
+            'body'      => 'required|min:3|max:191',
+            'rate'      => 'required'
+         ]);
+         
+
+         //find a post
+         $post  =   Post::find($id);
+         //check that if user is allowed to perfom this operation
+         if($post->user_id !== Auth::user()->id){
+             return redirect('/')->with('error_message','you are not authorized to peform this operation');
+         }
+
+         $post->title = $request->input('title');
+         $post->body = $request->input('body');
+         $post->rate = $request->input('rate');
+         $post->save();
+ 
+        return redirect('/')->with('success_message','post successfully added');
     }
 
     /**
@@ -81,6 +107,11 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::find($id);
+        if($post->user_id !== Auth::user()->id){
+            return redirect('/')->with('error_message','you are not authorized to peform this operation');
+        }
+        $post->delete();
+        return redirect('/')->with('success_message','post successfully deleted');
     }
 }
